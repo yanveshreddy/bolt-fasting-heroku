@@ -202,7 +202,7 @@ const getUserFastingDetails = async (request, response) => {
       200,
       dbResponse
     );
-
+    // console.log(apiResponse);
     response.send(apiResponse);
     // await db.close();
   } catch (error) {
@@ -231,6 +231,7 @@ const getWeeklyFastingData = async (request, response) => {
       200,
       dbResponse
     );
+    // console.log(apiResponse);
     response.send(apiResponse);
     // await db.close();
   } catch (error) {
