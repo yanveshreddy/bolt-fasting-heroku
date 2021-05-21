@@ -26,11 +26,12 @@ const createUserFastingHistory = async (request, response) => {
   const { userId, startTime, endTime, goalTime, fastingTime } = request.body;
   // console.log(request.body);
   let is_goal_accomplished = fastingTime > goalTime * 3600;
-  const selectUserFastingHistoryQuery = `SELECT * FROM user_fasting_history WHERE user_id = ${userId} and started_at = ${startTime}`;
+  // const selectUserFastingHistoryQuery = `SELECT * FROM user_fasting_history WHERE user_id = ${userId} and started_at = ${startTime}`;
+
+  //   const dbResult = await db.get(selectUserFastingHistoryQuery);
+  //   if (dbResult === undefined) {
   try {
-    const dbResult = await db.get(selectUserFastingHistoryQuery);
-    if (dbResult === undefined) {
-      const createUserFastingHistoryQuery = `
+    const createUserFastingHistoryQuery = `
                       INSERT INTO
                       user_fasting_history (user_id, started_at,ended_at, goal_time,is_goal_accomplished,fasting_time,created_on,updated_on)
                       VALUES
@@ -45,40 +46,40 @@ const createUserFastingHistory = async (request, response) => {
                           '${time.now()}'
                       )`;
 
-      let dbResponse = await db.run(createUserFastingHistoryQuery);
-      dbResponse = { ...dbResponse, startTime: startTime };
-      // const newUserId = dbResponse.lastID;
-      let apiResponse = apiResponseFormat.generate(
-        false,
-        "User fasting history created",
-        200,
-        dbResponse
-      );
-      // console.log(apiResponse);
-      response.send(apiResponse);
-    } else {
-      const updateUserFastingHistoryQuery = `
-                        Update user_fasting_history
-                        SET user_id = ${userId},
-                            started_at = ${startTime},
-                            ended_at = ${endTime},
-                            goal_time = ${goalTime},
-                            is_goal_accomplished = ${is_goal_accomplished},
-                            fasting_time =${fastingTime},
-                            updated_on = '${time.now()}'
-                        WHERE user_id=${userId} and started_at =${startTime}
-                        `;
-      let dbResponse = await db.run(updateUserFastingHistoryQuery);
-      dbResponse = { ...dbResponse, startTime: startTime };
-      // const newUserId = dbResponse.lastID;
-      let apiResponse = apiResponseFormat.generate(
-        false,
-        "User fasting history updated successfully",
-        200,
-        dbResponse
-      );
-      response.send(apiResponse);
-    }
+    let dbResponse = await db.run(createUserFastingHistoryQuery);
+    dbResponse = { ...dbResponse, startTime: startTime };
+    // const newUserId = dbResponse.lastID;
+    let apiResponse = apiResponseFormat.generate(
+      false,
+      "User fasting history created",
+      200,
+      dbResponse
+    );
+    // console.log(apiResponse);
+    response.send(apiResponse);
+    // } else {
+    //   const updateUserFastingHistoryQuery = `
+    //                     Update user_fasting_history
+    //                     SET user_id = ${userId},
+    //                         started_at = ${startTime},
+    //                         ended_at = ${endTime},
+    //                         goal_time = ${goalTime},
+    //                         is_goal_accomplished = ${is_goal_accomplished},
+    //                         fasting_time =${fastingTime},
+    //                         updated_on = '${time.now()}'
+    //                     WHERE user_id=${userId} and started_at =${startTime}
+    //                     `;
+    //   let dbResponse = await db.run(updateUserFastingHistoryQuery);
+    //   dbResponse = { ...dbResponse, startTime: startTime };
+    //   // const newUserId = dbResponse.lastID;
+    //   let apiResponse = apiResponseFormat.generate(
+    //     false,
+    //     "User fasting history updated successfully",
+    //     200,
+    //     dbResponse
+    //   );
+    //   response.send(apiResponse);
+    // }
   } catch (error) {
     console.log(error);
     response.send(error);
@@ -220,7 +221,7 @@ const getWeeklyFastingData = async (request, response) => {
     FROM
       user_fasting_history
     WHERE
-      user_id = ${userId} ORDER by started_at desc LIMIT 7`;
+      user_id = ${userId} ORDER by created_on desc LIMIT 7`;
 
   try {
     const dbResponse = await db.all(getWeeklyFastingDataQuery);
